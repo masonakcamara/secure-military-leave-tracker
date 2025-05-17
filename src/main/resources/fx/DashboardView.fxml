@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.leavetracker.ui.fx.DashboardController"
+      spacing="10" padding="10">
+
+    <Label fx:id="welcomeLabel" style="-fx-font-size: 16px;"/>
+
+    <TableView fx:id="requestsTable" prefHeight="200">
+        <columns>
+            <TableColumn text="ID" fx:id="colId"/>
+            <TableColumn text="Start" fx:id="colStart"/>
+            <TableColumn text="End" fx:id="colEnd"/>
+            <TableColumn text="Type" fx:id="colType"/>
+            <TableColumn text="Reason" fx:id="colReason"/>
+            <TableColumn text="Status" fx:id="colStatus"/>
+            <TableColumn text="Action" fx:id="colAction"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10">
+        <Button text="New Request" onAction="#onNewRequest"/>
+        <Button text="Logout" onAction="#onLogout"/>
+    </HBox>
+
+    <Label fx:id="messageLabel" textFill="red"/>
+</VBox>

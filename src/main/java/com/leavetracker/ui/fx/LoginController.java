@@ -3,9 +3,15 @@ package com.leavetracker.ui.fx;
 import com.leavetracker.auth.AuthService;
 import com.leavetracker.model.User;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 /**
  * Controller for the login/register screen.
@@ -24,8 +30,21 @@ public class LoginController {
         String pass = passwordField.getText().trim();
         User u = auth.login(user, pass);
         if (u != null) {
-            messageLabel.setText("Welcome, " + u.getUsername());
-            // TODO: switch to main dashboard
+            try {
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/fx/DashboardView.fxml")
+                );
+                Parent root = loader.load();
+                DashboardController ctrl = loader.getController();
+                ctrl.setUser(u);
+
+                Stage stage = (Stage) usernameField.getScene().getWindow();
+                stage.setScene(new Scene(root));
+
+            } catch (IOException e) {
+                messageLabel.setText("Failed to open dashboard");
+                e.printStackTrace();
+            }
         } else {
             messageLabel.setText("Login failed");
         }
