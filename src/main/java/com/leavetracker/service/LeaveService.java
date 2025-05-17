@@ -82,4 +82,9 @@ public class LeaveService {
     public Optional<LeaveRequest> getRequestById(long requestId) {
         return repo.findById(requestId);
     }
+
+    public List<LeaveRequest> getAllRequests() {
+        return repo.findAll();
+    }
+
 }

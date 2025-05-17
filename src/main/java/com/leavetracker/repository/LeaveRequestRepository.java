@@ -144,4 +144,20 @@ public class LeaveRequestRepository {
         req.setStatus(status);
         return req;
     }
+
+    public List<LeaveRequest> findAll() {
+        List<LeaveRequest> list = new ArrayList<>();
+        String sql = "SELECT * FROM leave_requests";
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(mapRow(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching all leave requests", e);
+        }
+        return list;
+    }
+
 }

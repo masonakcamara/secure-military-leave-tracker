@@ -102,8 +102,16 @@ public class DashboardController {
     }
 
     void refreshTable() {
+        List<LeaveRequest> list;
+        if ("ADMIN".equals(currentUser.getRole())) {
+            // Admin sees everything
+            list = leaveService.getAllRequests();
+        } else {
+            // Regular user sees only their own
+            list = leaveService.getRequestsForUser(currentUser.getUsername());
+        }
+
         try {
-            List<LeaveRequest> list = leaveService.getRequestsForUser(currentUser.getUsername());
             requestsTable.setItems(FXCollections.observableArrayList(list));
         } catch (RuntimeException e) {
             showAlert(Alert.AlertType.ERROR,
