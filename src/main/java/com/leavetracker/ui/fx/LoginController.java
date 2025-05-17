@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -28,10 +29,12 @@ public class LoginController {
     private void onLogin() {
         String user = usernameField.getText().trim();
         String pass = passwordField.getText().trim();
+
         if (user.isEmpty() || pass.isEmpty()) {
             messageLabel.setText("Enter both username and password");
             return;
         }
+
         User u = auth.login(user, pass);
         if (u != null) {
             try {
@@ -46,12 +49,22 @@ public class LoginController {
                 stage.setScene(new Scene(root));
 
             } catch (IOException e) {
-                messageLabel.setText("Failed to open dashboard");
-                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR,
+                        "Load Error",
+                        "Could not open the dashboard.",
+                        e.getMessage());
             }
         } else {
             messageLabel.setText("Login failed");
         }
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String header, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     @FXML

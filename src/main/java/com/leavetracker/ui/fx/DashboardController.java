@@ -5,11 +5,15 @@ import com.leavetracker.model.User;
 import com.leavetracker.service.LeaveService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -29,6 +33,7 @@ public class DashboardController {
     private User currentUser;
 
     public void initialize() {
+        // Use PropertyValueFactory since LeaveRequest has plain getters
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colStart.setCellValueFactory(new PropertyValueFactory<>("startDate"));
         colEnd.setCellValueFactory(new PropertyValueFactory<>("endDate"));
@@ -91,14 +96,44 @@ public class DashboardController {
         refreshTable();
     }
 
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
     void refreshTable() {
-        List<LeaveRequest> list = leaveService.getRequestsForUser(currentUser.getUsername());
-        requestsTable.setItems(FXCollections.observableArrayList(list));
+        try {
+            List<LeaveRequest> list = leaveService.getRequestsForUser(currentUser.getUsername());
+            requestsTable.setItems(FXCollections.observableArrayList(list));
+        } catch (RuntimeException e) {
+            showAlert(Alert.AlertType.ERROR,
+                    "Load Error",
+                    "Could not fetch leave requests",
+                    e.getMessage());
+        }
     }
 
     @FXML
     private void onNewRequest() {
-        // existing NewRequest dialog logic...
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fx/NewRequestView.fxml")
+            );
+            Parent dialogRoot = loader.load();
+            NewRequestController ctrl = loader.getController();
+            ctrl.setParent(this);
+
+            Stage dialog = new Stage();
+            dialog.initOwner(welcomeLabel.getScene().getWindow());
+            dialog.setTitle("New Request");
+            dialog.setScene(new Scene(dialogRoot));
+            dialog.showAndWait();
+
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR,
+                    "Dialog Error",
+                    "Could not open New Request dialog",
+                    e.getMessage());
+        }
     }
 
     @FXML
@@ -107,9 +142,24 @@ public class DashboardController {
             MainApp main = new MainApp();
             main.start(new Stage());
         } catch (Exception e) {
-            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR,
+                    "Logout Error",
+                    "Could not return to login screen",
+                    e.getMessage());
         }
         Stage current = (Stage) welcomeLabel.getScene().getWindow();
         current.close();
+    }
+
+    /** Utility to pop up an Alert dialog. */
+    private void showAlert(Alert.AlertType type,
+                           String title,
+                           String header,
+                           String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }
