@@ -28,6 +28,10 @@ public class LoginController {
     private void onLogin() {
         String user = usernameField.getText().trim();
         String pass = passwordField.getText().trim();
+        if (user.isEmpty() || pass.isEmpty()) {
+            messageLabel.setText("Enter both username and password");
+            return;
+        }
         User u = auth.login(user, pass);
         if (u != null) {
             try {
@@ -54,6 +58,10 @@ public class LoginController {
     private void onRegister() {
         String user = usernameField.getText().trim();
         String pass = passwordField.getText().trim();
+        if (user.isEmpty() || pass.isEmpty()) {
+            messageLabel.setText("Username and password cannot be blank");
+            return;
+        }
         boolean ok = auth.register(user, pass, "USER");
         messageLabel.setText(ok ? "Registered! Please login." : "User exists");
     }
