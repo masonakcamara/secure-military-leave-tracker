@@ -1,32 +1,35 @@
 # Secure Military Leave Tracker
 
-A Java command line application to manage military leave requests securely. It includes user registration, login, leave submission, approval workflow, and persistent storage.
+A Java application to manage military leave requests securely. It offers both a command-line interface (CLI) and a JavaFX graphical interface, with strong authentication, approval workflows, and persistent storage.
 
 ## Features
 
-- Secure user registration and login with BCrypt password hashing
-- Create, view, cancel, approve, and deny leave requests
-- Role-based access: regular users manage their own requests; admins review all pending requests
-- Embedded H2 database for storage of users and leave requests
-- Structured logging with SLF4J and Logback
-- Automated unit tests with JUnit 5
+- **User authentication** with BCrypt-hashed passwords
+- **Leave requests**: create, view, cancel, approve, and deny
+- **Role-based access**: regular users manage their own requests; admins review all pending requests
+- **In-memory CLI** and **JavaFX UI** for interactive workflows
+- **H2 embedded database** for persisting users and leave requests
+- **Structured logging** via SLF4J and Logback
+- **Automated unit and integration tests** with JUnit 5
+- **Continuous integration** with GitHub Actions (build, test, package)
 
 ## Tech Stack
 
 - **Java 17**
 - **Maven** for build and dependency management
 - **H2** embedded database
-- **jbcrypt** for password hashing
+- **jBCrypt** for password hashing
 - **SLF4J + Logback** for logging
-- **JUnit 5** for automated testing
+- **JUnit 5** for testing
+- **JavaFX** for the graphical UI
 
 ## Getting Started
 
 ### Prerequisites
 
-- Java 17 or higher installed
-- Maven 3.x installed
-- Git (optional) for cloning the repository
+- Java 17 or higher
+- Maven 3.x
+- Git (optional)
 
 ### Build
 
@@ -34,25 +37,33 @@ A Java command line application to manage military leave requests securely. It i
 mvn clean package
 ```
 
-## Run
+This produces a “fat” JAR in `target/leave-tracker.jar`.
 
-You can run the application from Maven:
+### Run (CLI)
 
 ```bash
 mvn exec:java -Dexec.mainClass="com.leavetracker.App"
 ```
 
-Or run the packaged jar:
+### Run (JavaFX GUI)
 
 ```bash
-java -jar target/secure-military-leave-tracker-1.0-SNAPSHOT.jar
+mvn javafx:run
 ```
 
-## Tests
+### Tests
 
 ```bash
 mvn test
 ```
+
+## Continuous Integration
+
+A GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and pull request to `master`, executing:
+
+1. `mvn clean verify` (compile & tests)
+2. `mvn package` (builds shaded JAR)
+3. Uploads the JAR as a workflow artifact
 
 ## Project Structure
 
@@ -64,15 +75,23 @@ src/
       model/          Data classes (User, LeaveRequest)
       repository/     JDBC persistence layer
       service/        Business logic
-      ui/             ConsoleUI for menus and prompts
-      util/           Database setup helper
+      ui/             
+        ConsoleUI     CLI menus and prompts
+        fx/           JavaFX controllers and entry points
+      util/           Database initialization helper
+  main/
+    resources/
+      fx/             FXML views for JavaFX
   test/
-    java/com/leavetracker/   Unit tests for services
-pom.xml                  Maven configuration and dependencies
+    java/com/leavetracker/
+      auth/           AuthService unit tests
+      service/        LeaveService unit tests
+      repository/     UserRepository & LeaveRequestRepository integration tests
+pom.xml             Maven configuration and plugins
+README.md           Project overview and instructions
+LICENSE             MIT license
 ```
 
-## Next Steps
+## License
 
-- Improve input validation and error handling
-- Swap the command line interface for a lightweight JavaFX GUI or REST API
-- Package and distribute as a standalone executable or Docker container  
+This project is licensed under the [MIT License](LICENSE).
