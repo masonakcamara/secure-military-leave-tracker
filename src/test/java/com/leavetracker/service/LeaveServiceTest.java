@@ -1,9 +1,13 @@
 package com.leavetracker.service;
 
+import com.leavetracker.util.DatabaseUtil;
 import com.leavetracker.model.LeaveRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +20,15 @@ class LeaveServiceTest {
 
     @BeforeEach
     void setUp() {
+        // wipe out any existing leave requests
+        try (Connection conn = DatabaseUtil.getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate("DELETE FROM leave_requests");
+            // optional: clean users too if you ever depend on them
+            stmt.executeUpdate("DELETE FROM users");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         svc = new LeaveService();
     }
 

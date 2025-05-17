@@ -1,8 +1,13 @@
 package com.leavetracker.auth;
 
+import com.leavetracker.util.DatabaseUtil;
 import com.leavetracker.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,13 +17,20 @@ class AuthServiceTest {
 
     @BeforeEach
     void setUp() {
+        // wipe out any existing users
+        try (Connection conn = DatabaseUtil.getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate("DELETE FROM users");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         auth = new AuthService();
     }
 
     @Test
     void registerNewUserSucceeds() {
         boolean first = auth.register("bob", "pass123", "USER");
-        assertTrue(first, "First registration should succeed");
+        assertTrue(first);
     }
 
     @Test
