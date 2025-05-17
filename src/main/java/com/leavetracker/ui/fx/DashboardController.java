@@ -14,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -115,24 +116,36 @@ public class DashboardController {
     @FXML
     private void onNewRequest() {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/fx/NewRequestView.fxml")
-            );
+            // 1) Locate the FXML on the classpath
+            URL fxmlUrl = getClass().getResource("/fx/NewRequestView.fxml");
+            if (fxmlUrl == null) {
+                throw new RuntimeException("Cannot find NewRequestView.fxml on classpath");
+            }
+
+            // 2) Give the loader its location up front
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+
+            // 3) Load the scene graph
             Parent dialogRoot = loader.load();
+
+            // 4) Initialize the controller
             NewRequestController ctrl = loader.getController();
             ctrl.setParent(this);
 
+            // 5) Show in a modal dialog
             Stage dialog = new Stage();
             dialog.initOwner(welcomeLabel.getScene().getWindow());
             dialog.setTitle("New Request");
             dialog.setScene(new Scene(dialogRoot));
             dialog.showAndWait();
 
-        } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR,
+        } catch (Exception e) {
+            showAlert(
+                    Alert.AlertType.ERROR,
                     "Dialog Error",
                     "Could not open New Request dialog",
-                    e.getMessage());
+                    e.getMessage()
+            );
         }
     }
 

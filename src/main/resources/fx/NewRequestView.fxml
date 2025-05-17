@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.leavetracker.ui.fx.NewRequestController"
+      spacing="10">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <Label text="New Leave Request" style="-fx-font-size: 16px;"/>
+
+    <HBox spacing="10">
+        <Label text="Start:"/>
+        <DatePicker fx:id="startDatePicker"/>
+    </HBox>
+    <HBox spacing="10">
+        <Label text="End:"/>
+        <DatePicker fx:id="endDatePicker"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Type:"/>
+        <!-- just an empty ChoiceBox -->
+        <ChoiceBox fx:id="typeChoiceBox"/>
+    </HBox>
+
+    <Label text="Reason:"/>
+    <TextArea fx:id="reasonArea" prefRowCount="3"/>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Label fx:id="errorLabel" textFill="red"/>
+        <Button text="Submit" onAction="#onSubmit"/>
+        <Button text="Cancel" onAction="#onCancel"/>
+    </HBox>
+</VBox>
