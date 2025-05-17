@@ -1,46 +1,43 @@
 package com.leavetracker.auth;
 
 import com.leavetracker.model.User;
+import com.leavetracker.repository.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
 /**
- * Handles user sign-up and sign-in using an in-memory store and BCrypt.
+ * Handles user sign-up and sign-in against the H2 database.
  */
 public class AuthService {
 
-    private final Map<String, User> users = new HashMap<>();
+    private final UserRepository userRepo = new UserRepository();
 
     /**
-     * Add a new user with a hashed password.
+     * Register a new user by hashing their password and saving to the DB.
      *
      * @param username unique login name
      * @param password plain-text password
      * @param role     the user’s role, e.g. "USER" or "ADMIN"
-     * @return true if the user was added; false if the username is taken
+     * @return true if saved; false if username already exists
      */
     public boolean register(String username, String password, String role) {
-        if (users.containsKey(username)) {
-            return false;
-        }
         String hash = BCrypt.hashpw(password, BCrypt.gensalt());
-        users.put(username, new User(username, hash, role));
-        return true;
+        User user = new User(username, hash, role);
+        return userRepo.save(user);
     }
 
     /**
-     * Check credentials and return the user if they match.
+     * Authenticate a user by verifying their password hash.
      *
      * @param username login name
      * @param password plain-text password
-     * @return the User on success, or null if login fails
+     * @return the User on success; null if login fails
      */
     public User login(String username, String password) {
-        User user = users.get(username);
-        if (user != null && BCrypt.checkpw(password, user.getPasswordHash())) {
-            return user;
+        Optional<User> opt = userRepo.findByUsername(username);
+        if (opt.isPresent() && BCrypt.checkpw(password, opt.get().getPasswordHash())) {
+            return opt.get();
         }
         return null;
     }
