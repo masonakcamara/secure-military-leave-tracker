@@ -62,7 +62,7 @@ mvn test
 
 ## Continuous Integration
 
-A GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and pull request to `main`, executing:
+A GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and pull request to `master`, executing:
 
 1. `mvn clean verify` (compile & tests)  
 2. `mvn package` (builds shaded JAR)
